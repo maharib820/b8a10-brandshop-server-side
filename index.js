@@ -27,6 +27,7 @@ async function run() {
         await client.connect();
 
         const productCollection = client.db("randf").collection("products");
+        const cartCollection = client.db("randf").collection("addedcart");
 
         // CRUD operation section
 
@@ -35,6 +36,13 @@ async function run() {
             const getProduct = req.body;
             // console.log(getProduct);
             const result = await productCollection.insertOne(getProduct);
+            res.send(result)
+        })
+
+        app.post("/cart", async (req, res) => {
+            const myCart = req.body;
+            // console.log(myCart);
+            const result = await cartCollection.insertOne(myCart);
             res.send(result)
         })
 
