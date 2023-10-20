@@ -33,8 +33,18 @@ async function run() {
         // POST from add product
         app.post("/addnewproduct/", async (req, res) => {
             const getProduct = req.body;
-            console.log(getProduct);
+            // console.log(getProduct);
             const result = await productCollection.insertOne(getProduct);
+            res.send(result)
+        })
+
+        // get added product
+        app.get("/brands/:name", async (req, res) => {
+            const name = req.params.name;
+            console.log(name);
+            const filter = { brand: name }
+            const cursor = productCollection.find(filter);
+            const result = await cursor.toArray();
             res.send(result)
         })
 
