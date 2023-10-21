@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -49,19 +49,60 @@ async function run() {
         // get added product
         app.get("/brands/:name", async (req, res) => {
             const name = req.params.name;
-            console.log(name);
+            // console.log(name);
             const filter = { brand: name }
             const cursor = productCollection.find(filter);
             const result = await cursor.toArray();
             res.send(result)
         })
 
-        // get added product
+        // get single added product
         app.get("/products/:product", async (req, res) => {
             const product = req.params.product;
             const filter = { product: product }
             const cursor = productCollection.find(filter);
             const result = await cursor.toArray();
+            res.send(result)
+        })
+
+        // cart info get
+        app.get("/mycart/:name", async (req, res) => {
+            const name = req.params.name;
+            const filter = {email:name};
+            const cursor = cartCollection.find(filter);
+            const result = await cursor.toArray();
+            res.send(result);
+        })
+
+        // get updated product
+        app.get("/update/:product", async (req, res) => {
+            const product = req.params.product;
+            const filter = {product : product}
+            const result = await productCollection.findOne(filter)
+            // console.log(result);
+            res.send(result);
+        })
+
+        app.delete("/mycart/:product", async (req, res) => {
+            const name=req.params.product;
+            // console.log(name);
+            const filter = {cart : name};
+            const result = await cartCollection.deleteOne(filter)
+            res.send(result);
+        })
+
+        // update added data
+        app.put("/update/:product", async (req, res) => {
+            const product = req.params.product;
+            const body = req.body;
+            const filter = {product : product};
+            const options = { upsert: true }
+            const updateDoc = {
+                $set : {
+                    product: body.product, brand: body.brand, type: body.type, price: body.price, rating: body.rating, photo: body.photo, description: body.description
+                }
+            }
+            const result = await productCollection.updateOne(filter, updateDoc, options )
             res.send(result)
         })
 
