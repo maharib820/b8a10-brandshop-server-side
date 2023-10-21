@@ -28,7 +28,7 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
 
         const productCollection = client.db("randf").collection("products");
         const cartCollection = client.db("randf").collection("addedcart");
@@ -87,10 +87,10 @@ async function run() {
             res.send(result);
         })
 
-        app.delete("/mycart/:product", async (req, res) => {
-            const name=req.params.product;
-            // console.log(name);
-            const filter = {cart : name};
+        app.delete("/mycart/:id", async (req, res) => {
+            const name=req.params.id;
+            console.log(name);
+            const filter = {_id : new ObjectId(name)};
             const result = await cartCollection.deleteOne(filter)
             res.send(result);
         })
@@ -111,7 +111,7 @@ async function run() {
         })
 
         // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
         // Ensures that the client will close when you finish/error
